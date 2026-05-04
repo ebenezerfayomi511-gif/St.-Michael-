@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SchoolLink – Results Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f1923;--cream:#f5f0e8;--gold:#c9a84c;--gold-light:#e8d5a3;
+  --sage:#3d6b5e;--sage-light:#e8f0ee;--red:#c0392b;--card:#fff;
+  --border:#e2ddd4;--muted:#7a7060;--r:12px;
+  --sh:0 4px 24px rgba(15,25,35,.10);--shl:0 12px 48px rgba(15,25,35,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+#splash{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--ink);padding:2rem;text-align:center;position:relative;overflow:hidden;}
+#splash::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,#1e3a2e 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,#2a1a0a 0%,transparent 60%);}
+.spl-logo{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,8vw,5rem);font-weight:900;color:var(--gold);letter-spacing:-1px;position:relative;z-index:1;line-height:1;}
+.spl-tag{color:rgba(255,255,255,.55);font-size:.95rem;letter-spacing:.12em;text-transform:uppercase;margin-top:.5rem;position:relative;z-index:1;}
+.spl-div{width:60px;height:2px;background:var(--gold);margin:2.5rem auto;position:relative;z-index:1;}
+.spl-btns{display:flex;flex-direction:column;gap:1rem;width:100%;max-width:320px;position:relative;z-index:1;}
+.btn-p{background:var(--gold);color:var(--ink);border:none;padding:1rem 1.5rem;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-weight:600;font-size:1rem;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.4);}
+.btn-s{background:transparent;color:var(--gold-light);border:1.5px solid rgba(201,168,76,.4);padding:1rem 1.5rem;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;cursor:pointer;}
+.btn-s:hover{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.btn-g{background:transparent;color:var(--muted);border:1.5px solid var(--border);padding:.75rem 1.5rem;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-weight:500;font-size:.9rem;cursor:pointer;width:100%;margin-top:.5rem;}
+.btn-g:hover{border-color:var(--ink);color:var(--ink);}
+.btn-sage{background:var(--sage);color:#fff;border:none;padding:.9rem 1.5rem;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;width:100%;transition:opacity .15s;}
+.btn-sage:hover{opacity:.88;}
+.btn-sm{padding:.45rem .9rem!important;font-size:.8rem!important;border-radius:7px!important;width:auto!important;}
+.btn-red{background:var(--red);color:#fff;border:none;padding:.7rem 1.2rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;}
+.screen{display:none;min-height:100vh;flex-direction:column;animation:fadeIn .3s ease;}
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.topbar{background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;position:sticky;top:0;z-index:50;}
+.tb-brand{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--gold);letter-spacing:-.5px;}
+.tb-back{background:none;border:none;color:var(--gold-light);font-size:1.3rem;cursor:pointer;padding:.25rem;line-height:1;}
+.tb-act{background:none;border:none;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;padding:.25rem;}
+.tb-act:hover{color:var(--gold);}
+.content{padding:1.5rem 1.25rem;flex:1;max-width:680px;width:100%;margin:0 auto;}
+.fg{margin-bottom:1.25rem;}
+label{display:block;font-size:.82rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.45rem;}
+input,select,textarea{width:100%;padding:.85rem 1rem;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink);background:#fff;transition:border-color .15s;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+textarea{resize:vertical;min-height:70px;}
+.hint{font-size:.78rem;color:var(--muted);margin-top:.35rem;}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh);}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:.25rem;}
+.card-sub{font-size:.82rem;color:var(--muted);}
+.card-row{display:flex;align-items:center;justify-content:space-between;}
+.badge{display:inline-block;padding:.2rem .65rem;border-radius:50px;font-size:.72rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;}
+.bg{background:var(--gold-light);color:#7a5a00;}
+.bs{background:var(--sage-light);color:var(--sage);}
+.br{background:#fdecea;color:var(--red);}
+.sh{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:.35rem;line-height:1.2;}
+.ss{color:var(--muted);font-size:.88rem;margin-bottom:1.75rem;}
+.notice{background:var(--sage-light);border-left:3px solid var(--sage);border-radius:6px;padding:.85rem 1rem;font-size:.85rem;color:var(--sage);margin-bottom:1.25rem;}
+.n-err{background:#fdecea;border-left-color:var(--red);color:var(--red);}
+.n-warn{background:#fef9e7;border-left-color:var(--gold);color:#7a5a00;}
+.chip-list{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;min-height:34px;}
+.chip{display:flex;align-items:center;gap:.4rem;background:#fff;border:1.5px solid var(--border);border-radius:50px;padding:.35rem .75rem;font-size:.83rem;font-weight:500;}
+.chip-x{background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;line-height:1;padding:0;}
+.add-subj-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
+.add-subj-row .sn{flex:2;min-width:120px;}
+.btn-add-subj{flex-shrink:0;background:var(--sage);color:#fff;border:none;padding:.65rem .95rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.83rem;cursor:pointer;white-space:nowrap;}
+.tbl-wrap{overflow-x:auto;border:1.5px solid var(--border);border-radius:var(--r);background:#fff;}
+.stbl{width:100%;border-collapse:collapse;font-size:.78rem;}
+.stbl .gh th{background:#1a2e3b;color:rgba(255,255,255,.5);padding:.35rem .6rem;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;text-align:center;font-weight:600;border-right:2px solid #2a3f50;}
+.stbl .gh th:first-child{text-align:left;border-right:none;}
+.stbl .gh th:nth-child(2){border-right:none;}
+.stbl .fh th{background:var(--ink);color:var(--gold-light);padding:.55rem .55rem;text-align:center;font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;font-weight:600;white-space:nowrap;}
+.stbl .fh th:first-child,.stbl .fh th:nth-child(2){text-align:left;}
+.stbl td{padding:.38rem .45rem;border-bottom:1px solid var(--border);vertical-align:middle;text-align:center;}
+.stbl td:first-child,.stbl td:nth-child(2){text-align:left;}
+.stbl tr:last-child td{border-bottom:none;}
+.stbl .subj-sep{border-right:2px solid var(--border);}
+.stbl input{padding:.42rem .45rem;font-size:.8rem;border-radius:5px;width:52px!important;text-align:center;}
+.total-cell{font-weight:700;background:#f5f8f5!important;}
+.pct-cell{font-weight:700;color:var(--sage);}
+.btn-row-del{background:none;border:none;color:var(--red);font-size:1.1rem;cursor:pointer;padding:.15rem .35rem;line-height:1;}
+.btn-add-row{background:var(--sage-light);color:var(--sage);border:1.5px dashed var(--sage);padding:.65rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;width:100%;margin-top:.5rem;}
+.btn-add-row:hover{background:#d4e8e3;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem;}
+.stat-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem;text-align:center;}
+.stat-n{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--sage);line-height:1;}
+.stat-l{font-size:.75rem;color:var(--muted);margin-top:.25rem;text-transform:uppercase;letter-spacing:.06em;}
+.gA{color:#1a7a3a;font-weight:700;} .gB{color:#2d6abf;font-weight:700;}
+.gC{color:#b5860d;font-weight:700;} .gD{color:#c05c00;font-weight:700;} .gF{color:var(--red);font-weight:700;}
+.bar-w{background:var(--border);border-radius:50px;height:8px;overflow:hidden;flex:1;}
+.bar-f{height:100%;border-radius:50px;transition:width .8s ease;}
+.svr{padding:.65rem 0;border-bottom:1px solid var(--border);}
+.svr:last-child{border-bottom:none;}
+.svr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem;}
+.svr-name{font-weight:600;font-size:.88rem;}
+.svr-scores{display:flex;gap:.75rem;}
+.svr-score-item{text-align:center;}
+.svr-score-val{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+.svr-score-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+.svr-bar-row{display:flex;align-items:center;gap:.65rem;}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--gold-light);color:#7a5a00;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;flex-shrink:0;}
+.flex-c{display:flex;align-items:center;gap:.75rem;}
+.mt1{margin-top:1rem;} .mt2{margin-top:1.5rem;}
+.small{font-size:.82rem;color:var(--muted);}
+.tc{text-align:center;}
+.step-lbl{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--sage);margin-bottom:.85rem;}
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted);}
+.empty-ico{font-size:2.5rem;margin-bottom:.75rem;}
+.empty-t{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--ink);margin-bottom:.5rem;}
+.score-scheme-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;margin-bottom:1rem;}
+.scheme-box{background:var(--sage-light);border:1.5px solid var(--sage);border-radius:8px;padding:.75rem;text-align:center;}
+.scheme-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--sage);}
+.scheme-lbl{font-size:.7rem;color:var(--sage);text-transform:uppercase;letter-spacing:.06em;margin-top:.15rem;}
+.student-remark-block{background:#fafaf8;border:1.5px solid var(--border);border-radius:10px;margin-bottom:.65rem;overflow:hidden;}
+.srb-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;cursor:pointer;background:#fff;}
+.srb-name{font-weight:600;font-size:.9rem;}
+.srb-toggle{font-size:.85rem;color:var(--muted);transition:transform .2s;}
+.srb-body{padding:.75rem 1rem;border-top:1px solid var(--border);display:none;}
+.srb-body.open{display:block;}
+.debt-toggle{display:flex;align-items:center;gap:.5rem;margin-top:.65rem;}
+.debt-toggle input[type=checkbox]{width:auto;margin:0;}
+.debt-toggle label{text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--ink);font-weight:500;margin:0;}
+.report-card{background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:1.5rem;margin-bottom:1.5rem;box-shadow:var(--shl);}
+.rc-header{text-align:center;border-bottom:2px solid var(--border);padding-bottom:1rem;margin-bottom:1rem;}
+.rc-school{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;color:var(--ink);}
+.rc-title{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:.2rem;}
+.rc-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem;font-size:.82rem;}
+.rc-info-item{background:var(--cream);border-radius:6px;padding:.5rem .75rem;}
+.rc-info-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.1rem;}
+.rc-info-val{font-weight:700;font-size:.9rem;}
+.rc-subj-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-bottom:1rem;}
+.rc-subj-table th{background:var(--ink);color:var(--gold-light);padding:.5rem .6rem;text-align:left;font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;}
+.rc-subj-table td{padding:.5rem .6rem;border-bottom:1px solid var(--border);}
+.rc-subj-table tr:last-child td{border-bottom:none;}
+.rc-subj-table tr:nth-child(even) td{background:#fafaf8;}
+.rc-remark-box{background:var(--cream);border-radius:8px;padding:.85rem 1rem;margin-bottom:.75rem;}
+.rc-remark-lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;margin-bottom:.3rem;}
+.rc-remark-text{font-size:.88rem;font-style:italic;color:var(--ink);line-height:1.5;}
+.rc-remark-sign{font-size:.75rem;color:var(--muted);margin-top:.4rem;text-align:right;}
+.rc-resumption{background:var(--sage-light);border:1.5px solid var(--sage);border-radius:8px;padding:.75rem 1rem;text-align:center;margin-bottom:.75rem;}
+.rc-resumption-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);font-weight:700;}
+.rc-resumption-date{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--sage);margin-top:.2rem;}
+.rc-footer{text-align:center;font-size:.72rem;color:var(--muted);border-top:1px solid var(--border);padding-top:.75rem;margin-top:.75rem;}
+.debt-block{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--ink);padding:2rem;text-align:center;}
+.debt-icon{font-size:4rem;margin-bottom:1rem;}
+.debt-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--red);margin-bottom:.75rem;}
+.debt-msg{color:rgba(255,255,255,.7);font-size:.95rem;max-width:320px;line-height:1.6;margin-bottom:1.5rem;}
+.debt-contact{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:var(--r);padding:1rem;color:#fff;font-size:.88rem;}
+#install-banner{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.85rem 1.25rem;border-radius:50px;box-shadow:var(--shl);display:flex;align-items:center;gap:.75rem;font-size:.85rem;z-index:999;max-width:90vw;animation:slideUp .4s ease;}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(20px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+#install-banner button{background:var(--gold);color:var(--ink);border:none;padding:.45rem 1rem;border-radius:50px;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap;}
+.x-banner{background:none!important;border:none!important;color:rgba(255,255,255,.5)!important;cursor:pointer;font-size:1.1rem;padding:0!important;line-height:1;}
+::-webkit-scrollbar{width:5px;height:5px;} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+@media print{
+  .topbar,.btn-sage,.btn-p,.btn-g,.btn-s,#install-banner,.tb-back,.tb-act{display:none!important;}
+  .report-card{box-shadow:none;border:1.5px solid #ccc;page-break-after:always;}
+  body{background:#fff;}
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="spl-logo">SchoolLink</div>
+  <div class="spl-tag">Results Management Portal</div>
+  <div class="spl-div"></div>
+  <div class="spl-btns">
+    <button class="btn-p" onclick="showScreen('teacher-login')">🎓 Teacher Login</button>
+    <button class="btn-s" onclick="showScreen('parent-login')">👨‍👩‍👧 Parent / Guardian</button>
+    <button class="btn-s" style="font-size:.85rem;padding:.7rem" onclick="showScreen('teacher-register')">New Teacher? Register Here</button>
+    <button class="btn-s" style="font-size:.85rem;padding:.7rem;margin-top:.25rem" onclick="showScreen('headteacher-login')">🏫 Head Teacher Login</button>
+  </div>
+</div>
+
+<div class="screen" id="screen-teacher-register">
+  <div class="topbar"><button class="tb-back" onclick="goHome()">← Back</button><span class="tb-brand">SchoolLink</span><span></span></div>
+  <div class="content">
+    <div class="sh">Create Account</div><div class="ss">Register as a teacher to upload results</div>
+    <div class="card">
+      <div class="fg"><label>Full Name</label><input type="text" id="reg-name" placeholder="e.g. Mrs. Amaka Okonkwo"></div>
+      <div class="fg"><label>Email Address</label><input type="email" id="reg-email" placeholder="teacher@school.edu"></div>
+      <div class="fg"><label>Your Class</label><input type="text" id="reg-class" placeholder="e.g. JSS 2A, SS3 Science"></div>
+      <div class="fg"><label>Teacher Registration Code</label><input type="text" id="reg-code" placeholder="Code from school admin"><div class="hint">Ask your school administrator for the registration code.</div></div>
+      <div class="fg"><label>Choose Password</label><input type="password" id="reg-pass" placeholder="Min. 6 characters"></div>
+      <div class="fg"><label>Confirm Password</label><input type="password" id="reg-pass2" placeholder="Re-enter password"></div>
+      <div id="reg-err" class="notice n-err" style="display:none"></div>
+      <button class="btn-sage" onclick="registerTeacher()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-teacher-login">
+  <div class="topbar"><button class="tb-back" onclick="goHome()">← Back</button><span class="tb-brand">SchoolLink</span><span></span></div>
+  <div class="content">
+    <div class="sh">Teacher Login</div><div class="ss">Access your class results dashboard</div>
+    <div class="card">
+      <div class="fg"><label>Email Address</label><input type="email" id="tl-email" placeholder="teacher@school.edu"></div>
+      <div class="fg"><label>Password</label><input type="password" id="tl-pass" placeholder="Your chosen password"></div>
+      <div id="tl-err" class="notice n-err" style="display:none"></div>
+      <button class="btn-sage" onclick="loginTeacher()">Login</button>
+      <button class="btn-g" onclick="showScreen('teacher-register')">Don't have an account? Register</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-headteacher-login">
+  <div class="topbar"><button class="tb-back" onclick="goHome()">← Back</button><span class="tb-brand">SchoolLink</span><span></span></div>
+  <div class="content">
+    <div class="sh">Head Teacher</div><div class="ss">Login to add remarks and manage results</div>
+    <div class="card">
+      <div class="fg"><label>Head Teacher Password</label><input type="password" id="ht-pass" placeholder="Head teacher password"></div>
+      <div id="ht-err" class="notice n-err" style="display:none"></div>
+      <button class="btn-sage" onclick="loginHeadTeacher()">Login</button>
+      <div class="hint" style="margin-top:.5rem;text-align:center">Default password: <strong>HEAD2024</strong> — change in settings</div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-headteacher-dashboard">
+  <div class="topbar"><button class="tb-back" onclick="logoutHT()">← Logout</button><span class="tb-brand">Head Teacher</span><span></span></div>
+  <div class="content">
+    <div class="sh">Head Teacher Panel</div>
+    <div class="ss">Add remarks to student report cards across all classes</div>
+    <div class="card">
+      <div class="step-lbl" style="margin-bottom:.65rem">🏫 School Settings</div>
+      <div class="fg"><label>School Name</label><input type="text" id="ht-school-name" placeholder="e.g. St. Michael Nursery & Primary School"></div>
+      <div class="fg"><label>Next Resumption Date</label><input type="date" id="ht-resumption"></div>
+      <div class="fg"><label>Head Teacher's Name</label><input type="text" id="ht-htname" placeholder="e.g. Mr. Emmanuel Obi"></div>
+      <div class="fg"><label>Change Head Teacher Password</label><input type="password" id="ht-newpass" placeholder="Leave blank to keep current"></div>
+      <button class="btn-sage" onclick="saveHTSettings()">💾 Save Settings</button>
+    </div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:.75rem">All Result Sets</div>
+    <div id="ht-results-list"><div class="empty"><div class="empty-ico">📋</div><div class="empty-t">No results published yet</div></div></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-ht-remarks">
+  <div class="topbar"><button class="tb-back" onclick="showScreen('headteacher-dashboard')">← Back</button><span class="tb-brand">HT Remarks</span><span></span></div>
+  <div class="content">
+    <div class="sh" id="ht-rem-title">Add Remarks</div>
+    <div class="ss" id="ht-rem-sub"></div>
+    <div class="notice">Write your individual remark for each student. You can also mark students who owe school fees — they will not be able to view results.</div>
+    <div id="ht-remarks-list"></div>
+    <button class="btn-sage mt1" onclick="saveHTRemarks()">💾 Save All Remarks</button>
+    <div style="height:2rem"></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-teacher-dashboard">
+  <div class="topbar"><button class="tb-back" onclick="logoutTeacher()">← Logout</button><span class="tb-brand">SchoolLink</span><button class="tb-act" onclick="showScreen('upload-results')">+ Upload</button></div>
+  <div class="content">
+    <div style="margin-bottom:1.25rem">
+      <div class="sh" id="t-name-disp">Welcome</div>
+      <div class="ss" id="t-class-disp"></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-n" id="stat-up">0</div><div class="stat-l">Result Sets</div></div>
+      <div class="stat-card"><div class="stat-n" id="stat-stu">0</div><div class="stat-l">Students</div></div>
+    </div>
+    <div class="card-row" style="margin-bottom:1rem">
+      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700">Your Uploads</div>
+      <button class="btn-p btn-sm" onclick="showScreen('upload-results')">+ New</button>
+    </div>
+    <div id="upload-list"><div class="empty"><div class="empty-ico">📋</div><div class="empty-t">No results yet</div><p>Tap "+ New" to upload your first result set.</p></div></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-upload-results">
+  <div class="topbar"><button class="tb-back" onclick="showScreen('teacher-dashboard')">← Back</button><span class="tb-brand">Upload Results</span><span></span></div>
+  <div class="content">
+    <div class="sh">New Result Set</div>
+    <div class="ss">Enter CA scores + Exam scores for each subject</div>
+    <div class="card">
+      <div class="step-lbl">① Exam Details</div>
+      <div class="fg"><label>Term / Exam Title</label><input type="text" id="up-term" placeholder="e.g. First Term 2024/2025 Examination"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div class="fg"><label>Class</label><input type="text" id="up-class" placeholder="e.g. JSS 2A"></div>
+        <div class="fg"><label>Session</label><input type="text" id="up-session" placeholder="2024/2025"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="step-lbl">② Score Scheme</div>
+      <div class="notice n-warn" style="margin-bottom:.9rem">Set maximum marks for CA 1, CA 2, and Exam. Applies to all subjects.</div>
+      <div class="score-scheme-row">
+        <div class="scheme-box"><div class="scheme-val" id="sch-ca1-disp">20</div><div class="scheme-lbl">CA 1 Max</div></div>
+        <div class="scheme-box"><div class="scheme-val" id="sch-ca2-disp">20</div><div class="scheme-lbl">CA 2 Max</div></div>
+        <div class="scheme-box"><div class="scheme-val" id="sch-exam-disp">60</div><div class="scheme-lbl">Exam Max</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem">
+        <div class="fg" style="margin:0"><label>CA 1 Max</label><input type="number" id="sch-ca1" value="20" min="1" oninput="updateScheme()"></div>
+        <div class="fg" style="margin:0"><label>CA 2 Max</label><input type="number" id="sch-ca2" value="20" min="1" oninput="updateScheme()"></div>
+        <div class="fg" style="margin:0"><label>Exam Max</label><input type="number" id="sch-exam" value="60" min="1" oninput="updateScheme()"></div>
+      </div>
+      <div id="scheme-total-label" class="hint" style="margin-top:.6rem">Total per subject: <strong>100</strong></div>
+    </div>
+    <div class="card">
+      <div class="step-lbl">③ Subjects Offered</div>
+      <div id="subj-chips" class="chip-list"><span class="small" style="color:var(--muted);align-self:center">No subjects added yet</span></div>
+      <div class="add-subj-row" style="margin-bottom:.75rem">
+        <input type="text" class="sn" id="new-subj" placeholder="Subject name" list="subj-list" autocomplete="off">
+        <datalist id="subj-list">
+          <option value="Mathematics"><option value="English Language"><option value="Basic Science">
+          <option value="Social Studies"><option value="Civic Education"><option value="Agricultural Science">
+          <option value="Computer Studies"><option value="Business Studies"><option value="Home Economics">
+          <option value="Fine Art"><option value="Music"><option value="Physical Education">
+          <option value="Christian Religious Studies"><option value="Islamic Religious Studies">
+          <option value="Yoruba Language"><option value="Igbo Language"><option value="Hausa Language">
+          <option value="French Language"><option value="Economics"><option value="Government">
+          <option value="Literature in English"><option value="Geography"><option value="History">
+          <option value="Biology"><option value="Chemistry"><option value="Physics">
+          <option value="Further Mathematics"><option value="Technical Drawing"><option value="Financial Accounting">
+          <option value="Commerce"><option value="Marketing"><option value="Catering Craft Practice">
+          <option value="Data Processing"><option value="Typewriting">
+        </datalist>
+        <button class="btn-add-subj" onclick="addSubject()">+ Add</button>
+      </div>
+      <div class="hint" style="margin-bottom:.4rem">Quick add:</div>
+      <div id="quick-btns" style="display:flex;flex-wrap:wrap;gap:.4rem"></div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:1rem 1.25rem .5rem"><div class="step-lbl" style="margin-bottom:.25rem">④ Students &amp; Scores</div></div>
+      <div id="stu-notice" class="notice" style="margin:0 1.25rem .75rem">Add subjects in Step ③ first.</div>
+      <div class="tbl-wrap"><table class="stbl"><thead id="tbl-head"></thead><tbody id="tbl-body"></tbody></table></div>
+      <div style="padding:.75rem 1.25rem 1.25rem"><button class="btn-add-row" onclick="addStudentRow()">+ Add Student</button></div>
+    </div>
+    <div class="card" id="remarks-card" style="display:none">
+      <div class="step-lbl">⑤ Teacher's Remarks Per Student</div>
+      <div class="notice">Write an individual remark for each student. These will appear on their personal report card.</div>
+      <div id="individual-remarks-list"></div>
+    </div>
+    <div id="up-err" class="notice n-err" style="display:none"></div>
+    <button class="btn-sage mt1" onclick="saveResults()">💾 Save &amp; Publish Results</button>
+    <div style="height:2rem"></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-result-detail">
+  <div class="topbar"><button class="tb-back" onclick="showScreen('teacher-dashboard')">← Back</button><span class="tb-brand">Result Detail</span><button class="tb-act" onclick="deleteResult()" style="color:#e87a6a">🗑 Delete</button></div>
+  <div class="content"><div id="detail-content"></div></div>
+</div>
+
+<div class="screen" id="screen-parent-login">
+  <div class="topbar"><button class="tb-back" onclick="goHome()">← Back</button><span class="tb-brand">SchoolLink</span><span></span></div>
+  <div class="content">
+    <div class="sh">Parent Portal</div><div class="ss">Enter your details to view your child's results</div>
+    <div class="card">
+      <div class="fg"><label>Child's Full Name</label><input type="text" id="pl-name" placeholder="As registered by the teacher"></div>
+      <div class="fg"><label>Your Phone Number (Password)</label><input type="tel" id="pl-phone" placeholder="e.g. 08012345678"><div class="hint">Your registered phone number is your password.</div></div>
+      <div id="pl-err" class="notice n-err" style="display:none"></div>
+      <button class="btn-sage" onclick="loginParent()">View Results</button>
+    </div>
+    <div class="small tc mt1">Contact the school if you haven't been registered.</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-parent-results">
+  <div class="topbar"><button class="tb-back" onclick="showScreen('parent-login')">← Back</button><span class="tb-brand">Report Card</span><button class="tb-act" onclick="window.print()">🖨 Print</button></div>
+  <div class="content" id="parent-content"></div>
+</div>
+
+<div id="install-banner" style="display:none">
+  📲 <span>Add to Home Screen</span>
+  <button id="install-btn">Install App</button>
+  <button class="x-banner" onclick="document.getElementById('install-banner').style.display='none'">×</button>
+</div>
+
+<script>
+const TEACHER_CODE="SCHOOL2024";
+const KEY='schoollink_v4';
+function load(){return JSON.parse(localStorage.getItem(KEY)||JSON.stringify({teachers:[],results:[],settings:{schoolName:'',resumption:'',htName:'',htPass:'HEAD2024'}}));}
+function save(d){localStorage.setItem(KEY,JSON.stringify(d));}
+function getSettings(){const d=load();return d.settings||{schoolName:'',resumption:'',htName:'',htPass:'HEAD2024'};}
+let cTeacher=null,cResultId=null,fSubjects=[],rowCnt=0,htLoggedIn=false,htCurrentResultId=null;
+function showScreen(name){el('splash').style.display='none';document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const sc=el('screen-'+name);if(sc)sc.classList.add('active');if(name==='teacher-dashboard')refreshDash();if(name==='upload-results')initForm();if(name==='headteacher-dashboard')refreshHTDash();}
+function goHome(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));el('splash').style.display='flex';}
+function registerTeacher(){const name=v('reg-name'),email=v('reg-email').toLowerCase(),cls=v('reg-class'),code=v('reg-code'),pass=v('reg-pass'),pass2=v('reg-pass2'),err=el('reg-err');err.style.display='none';if(!name||!email||!cls||!code||!pass)return showErr(err,'Please fill in all fields.');if(code!==TEACHER_CODE)return showErr(err,'Invalid teacher code. Contact your school admin.');if(pass.length<6)return showErr(err,'Password must be at least 6 characters.');if(pass!==pass2)return showErr(err,'Passwords do not match.');const data=load();if(data.teachers.find(t=>t.email===email))return showErr(err,'Account already exists with this email.');const t={id:uid(),name,email,cls,password:btoa(pass)};data.teachers.push(t);save(data);cTeacher=t;showScreen('teacher-dashboard');}
+function loginTeacher(){const email=v('tl-email').toLowerCase(),pass=v('tl-pass'),err=el('tl-err');err.style.display='none';const t=load().teachers.find(t=>t.email===email&&t.password===btoa(pass));if(!t)return showErr(err,'Invalid email or password.');cTeacher=t;showScreen('teacher-dashboard');}
+function logoutTeacher(){cTeacher=null;goHome();}
+function loginHeadTeacher(){const pass=v('ht-pass'),err=el('ht-err');err.style.display='none';const s=getSettings();if(pass!==(s.htPass||'HEAD2024'))return showErr(err,'Incorrect head teacher password.');htLoggedIn=true;showScreen('headteacher-dashboard');}
+function logoutHT(){htLoggedIn=false;goHome();}
+function refreshHTDash(){const s=getSettings();el('ht-school-name').value=s.schoolName||'';el('ht-resumption').value=s.resumption||'';el('ht-htname').value=s.htName||'';el('ht-newpass').value='';const data=load(),list=el('ht-results-list');if(!data.results.length){list.innerHTML='<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">No results published yet</div></div>';return;}list.innerHTML=[...data.results].reverse().map(r=>`<div class="card"><div class="card-row"><div><div class="card-title">${r.term}</div><div class="card-sub">${r.cls} · ${r.session} · ${r.students.length} students · by ${r.teacherName}</div></div><button class="btn-p btn-sm" onclick="openHTRemarks('${r.id}')">✏️ Remarks</button></div></div>`).join('');}
+function saveHTSettings(){const data=load();if(!data.settings)data.settings={};data.settings.schoolName=v('ht-school-name');data.settings.resumption=v('ht-resumption');data.settings.htName=v('ht-htname');const np=v('ht-newpass');if(np.trim())data.settings.htPass=np.trim();save(data);alert('✅ Settings saved!');}
+function openHTRemarks(rid){htCurrentResultId=rid;const data=load(),r=data.results.find(x=>x.id===rid);if(!r)return;el('ht-rem-title').textContent=r.term;el('ht-rem-sub').textContent=r.cls+' · '+r.session;el('ht-remarks-list').innerHTML=r.students.map((s,i)=>`<div class="student-remark-block"><div class="srb-header" onclick="toggleSRB('ht-srb-${i}',this)"><div class="srb-name">${s.name} <span class="badge ${s.owesDebt?'br':'bs'}">${s.owesDebt?'⚠ Owes Fees':'✓ Clear'}</span></div><span class="srb-toggle">▼</span></div><div class="srb-body" id="ht-srb-${i}"><div class="fg" style="margin-bottom:.65rem"><label>Head Teacher's Remark for ${s.name.split(' ')[0]}</label><textarea id="ht-rem-${i}" placeholder="e.g. A diligent student with great potential...">${s.htRemark||''}</textarea></div><div class="debt-toggle"><input type="checkbox" id="ht-debt-${i}" ${s.owesDebt?'checked':''}><label for="ht-debt-${i}">⚠️ This student owes school fees (results will be blocked)</label></div></div></div>`).join('');showScreen('ht-remarks');}
+function saveHTRemarks(){const data=load(),r=data.results.find(x=>x.id===htCurrentResultId);if(!r)return;r.students.forEach((s,i)=>{s.htRemark=el('ht-rem-'+i)?.value.trim()||'';s.owesDebt=el('ht-debt-'+i)?.checked||false;});save(data);alert('✅ Head teacher remarks saved!');showScreen('headteacher-dashboard');}
+function toggleSRB(id,header){const body=el(id),isOpen=body.classList.contains('open');body.classList.toggle('open',!isOpen);header.querySelector('.srb-toggle').style.transform=isOpen?'':'rotate(180deg)';}
+function refreshDash(){if(!cTeacher)return;el('t-name-disp').textContent='Hello, '+cTeacher.name.split(' ').slice(-1)[0]+' 👋';el('t-class-disp').textContent=cTeacher.cls;const data=load(),mine=data.results.filter(r=>r.teacherId===cTeacher.id);el('stat-up').textContent=mine.length;el('stat-stu').textContent=mine.reduce((a,r)=>a+r.students.length,0);const list=el('upload-list');if(!mine.length){list.innerHTML='<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">No results yet</div><p>Tap "+ New" to upload your first result set.</p></div>';return;}list.innerHTML=[...mine].reverse().map(r=>`<div class="card" onclick="viewDetail('${r.id}')" style="cursor:pointer"><div class="card-row"><div><div class="card-title">${r.term}</div><div class="card-sub">${r.cls} · ${r.session} · ${r.students.length} student${r.students.length!==1?'s':''} · ${r.subjects.length} subject${r.subjects.length!==1?'s':''}</div><div class="card-sub" style="margin-top:.15rem">CA1(${r.scheme.ca1}) + CA2(${r.scheme.ca2}) + Exam(${r.scheme.exam}) = ${r.scheme.total}</div></div><span class="badge bs">Published</span></div></div>`).join('');}
+const QUICK=['Mathematics','English Language','Basic Science','Social Studies','Civic Education','Agricultural Science','Computer Studies','Business Studies'];
+function initForm(){el('up-term').value='';el('up-class').value=cTeacher?cTeacher.cls:'';el('up-session').value='';el('up-err').style.display='none';el('sch-ca1').value=20;el('sch-ca2').value=20;el('sch-exam').value=60;fSubjects=[];rowCnt=0;updateScheme();renderChips();buildHeader();el('tbl-body').innerHTML='';el('remarks-card').style.display='none';el('individual-remarks-list').innerHTML='';el('quick-btns').innerHTML=QUICK.map(s=>`<button onclick="quickAdd('${s}')" style="background:#fff;border:1.5px solid var(--border);border-radius:50px;padding:.25rem .7rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;" onmouseover="this.style.borderColor='var(--sage)'" onmouseout="this.style.borderColor='var(--border)'">${s}</button>`).join('');}
+function getScheme(){const ca1=parseInt(el('sch-ca1').value)||20,ca2=parseInt(el('sch-ca2').value)||20,exam=parseInt(el('sch-exam').value)||60;return{ca1,ca2,exam,total:ca1+ca2+exam};}
+function updateScheme(){const sc=getScheme();el('sch-ca1-disp').textContent=sc.ca1;el('sch-ca2-disp').textContent=sc.ca2;el('sch-exam-disp').textContent=sc.exam;el('scheme-total-label').innerHTML=`Total per subject: <strong>${sc.total}</strong>`;rebuildCols();}
+function addSubject(){const name=v('new-subj').trim();if(!name){alert('Please enter a subject name.');return;}if(fSubjects.find(s=>s.name.toLowerCase()===name.toLowerCase())){alert('Subject already added.');return;}fSubjects.push({name});el('new-subj').value='';renderChips();rebuildCols();syncRemarksPanel();}
+function quickAdd(name){if(fSubjects.find(s=>s.name.toLowerCase()===name.toLowerCase()))return;fSubjects.push({name});renderChips();rebuildCols();syncRemarksPanel();}
+function removeSubj(i){fSubjects.splice(i,1);renderChips();rebuildCols();syncRemarksPanel();}
+function renderChips(){el('subj-chips').innerHTML=fSubjects.length?fSubjects.map((s,i)=>`<div class="chip"><span>${s.name}</span><button class="chip-x" onclick="removeSubj(${i})">×</button></div>`).join(''):'<span class="small" style="color:var(--muted);align-self:center">No subjects added yet</span>';}
+function buildHeader(){if(!fSubjects.length){el('tbl-head').innerHTML='';el('stu-notice').style.display='block';return;}el('stu-notice').style.display='none';const sc=getScheme();let gh=`<tr class="gh"><th rowspan="2" style="text-align:left;vertical-align:bottom">Student Name</th><th rowspan="2" style="text-align:left;vertical-align:bottom;min-width:105px">Parent Phone</th>`;fSubjects.forEach(s=>{gh+=`<th colspan="4" style="border-left:2px solid #2a3f50">${s.name}</th>`;});gh+=`<th colspan="2" style="border-left:2px solid #2a3f50">Overall</th><th rowspan="2"></th></tr>`;let fh=`<tr class="fh">`;fSubjects.forEach(()=>{fh+=`<th style="border-left:2px solid rgba(255,255,255,.15)">CA1<br><span style="opacity:.6;font-size:.6rem">/${sc.ca1}</span></th><th>CA2<br><span style="opacity:.6;font-size:.6rem">/${sc.ca2}</span></th><th>Exam<br><span style="opacity:.6;font-size:.6rem">/${sc.exam}</span></th><th style="border-right:2px solid rgba(255,255,255,.15)">Total<br><span style="opacity:.6;font-size:.6rem">/${sc.total}</span></th>`;});fh+=`<th style="border-left:2px solid rgba(255,255,255,.15)">Avg%</th><th>Grade</th></tr>`;el('tbl-head').innerHTML=gh+fh;}
+function rebuildCols(){buildHeader();const sc=getScheme();const rows=[...el('tbl-body').querySelectorAll('tr')];if(!rows.length){if(fSubjects.length){addStudentRow();addStudentRow();addStudentRow();}return;}rows.forEach(row=>{const nv=row.cells[0].querySelector('input').value,pv=row.cells[1].querySelector('input').value,rid=row.id;const oldScores=[];for(let i=0;i<fSubjects.length;i++){const base=2+i*4;if(row.cells[base]){oldScores.push([row.cells[base].querySelector('input')?.value||'',row.cells[base+1]?.querySelector('input')?.value||'',row.cells[base+2]?.querySelector('input')?.value||'']);}else{oldScores.push(['','','']);}}row.innerHTML=buildRowCells(rid,nv,pv,oldScores,sc);attachAutoCalc(row,sc);});syncRemarksPanel();}
+function buildRowCells(rid,nv,pv,oldScores,sc){let cells=`<td><input type="text" placeholder="Full Name" value="${(nv||'').replace(/"/g,'&quot;')}" style="min-width:110px" oninput="syncRemarksPanel()"></td><td><input type="tel" placeholder="08012345678" value="${pv||''}" style="min-width:100px"></td>`;fSubjects.forEach((s,i)=>{const os=oldScores[i]||['','',''];cells+=`<td style="border-left:2px solid var(--border)"><input type="number" class="score-inp" min="0" max="${sc.ca1}" placeholder="—" value="${os[0]}"></td><td><input type="number" class="score-inp" min="0" max="${sc.ca2}" placeholder="—" value="${os[1]}"></td><td><input type="number" class="score-inp" min="0" max="${sc.exam}" placeholder="—" value="${os[2]}"></td><td class="total-cell subj-sep" id="${rid}-t${i}">—</td>`;});cells+=`<td class="pct-cell" id="${rid}-avg">—</td><td id="${rid}-grd">—</td><td><button class="btn-row-del" onclick="removeRow('${rid}')">×</button></td>`;return cells;}
+function removeRow(rid){document.getElementById(rid)?.remove();syncRemarksPanel();}
+function addStudentRow(){if(!fSubjects.length){alert('Please add at least one subject first.');return;}rowCnt++;const rid='r'+rowCnt,sc=getScheme(),tr=document.createElement('tr');tr.id=rid;tr.innerHTML=buildRowCells(rid,'','',fSubjects.map(()=>['','','']),sc);el('tbl-body').appendChild(tr);attachAutoCalc(tr,sc);syncRemarksPanel();}
+function attachAutoCalc(row,sc){const rid=row.id;row.querySelectorAll('input[type="number"]').forEach(inp=>inp.addEventListener('input',()=>recalcRow(row,rid,sc)));recalcRow(row,rid,sc);}
+function recalcRow(row,rid,sc){let totalScored=0,totalMax=0;fSubjects.forEach((s,i)=>{const base=2+i*4;const ca1=parseFloat(row.cells[base]?.querySelector('input')?.value)||0,ca2=parseFloat(row.cells[base+1]?.querySelector('input')?.value)||0,exam=parseFloat(row.cells[base+2]?.querySelector('input')?.value)||0,subTotal=ca1+ca2+exam;const tCell=el(rid+'-t'+i);if(tCell)tCell.textContent=subTotal||'—';totalScored+=subTotal;totalMax+=sc.total;});const avg=totalMax>0?Math.round((totalScored/totalMax)*100):0;const avgCell=el(rid+'-avg'),grdCell=el(rid+'-grd');if(avgCell)avgCell.textContent=totalScored?avg+'%':'—';if(grdCell){const g=grade(avg);grdCell.textContent=totalScored?g:'—';grdCell.className='g'+g;}}
+function syncRemarksPanel(){const rows=[...el('tbl-body').querySelectorAll('tr')];const students=rows.map(r=>r.cells[0].querySelector('input').value.trim()).filter(Boolean);if(!students.length||!fSubjects.length){el('remarks-card').style.display='none';return;}el('remarks-card').style.display='block';const existing={};el('individual-remarks-list').querySelectorAll('.srb-body textarea').forEach((ta,i)=>{const nameEl=el('individual-remarks-list').querySelectorAll('.srb-name')[i];if(nameEl)existing[nameEl.textContent.trim()]=ta.value;});el('individual-remarks-list').innerHTML=students.map((name,i)=>`<div class="student-remark-block"><div class="srb-header" onclick="toggleSRB('t-srb-${i}',this)"><div class="srb-name">${name}</div><span class="srb-toggle">▼</span></div><div class="srb-body" id="t-srb-${i}"><label style="margin-bottom:.4rem">Teacher's Remark for ${name.split(' ')[0]}</label><textarea id="t-rem-${i}" placeholder="e.g. Very hardworking and focused. Keep it up!">${existing[name]||''}</textarea></div></div>`).join('');}
+function saveResults(){const term=v('up-term'),cls=v('up-class'),session=v('up-session'),err=el('up-err');err.style.display='none';if(!term||!cls||!session)return showErr(err,'Please fill in Term Title, Class, and Session.');if(!fSubjects.length)return showErr(err,'Please add at least one subject.');const sc=getScheme(),rows=el('tbl-body').querySelectorAll('tr'),students=[];let remarkIdx=0;for(const row of rows){const name=row.cells[0].querySelector('input').value.trim(),phone=row.cells[1].querySelector('input').value.trim().replace(/\s/g,'');if(!name&&!phone)continue;if(!name||!phone)return showErr(err,'Every student needs a name and parent phone number.');const subjects={};let anyScore=false;for(let i=0;i<fSubjects.length;i++){const base=2+i*4,ca1r=row.cells[base]?.querySelector('input')?.value.trim(),ca2r=row.cells[base+1]?.querySelector('input')?.value.trim(),exr=row.cells[base+2]?.querySelector('input')?.value.trim();const ca1=ca1r===''?null:parseFloat(ca1r),ca2=ca2r===''?null:parseFloat(ca2r),exam=exr===''?null:parseFloat(exr);if(ca1!==null&&(isNaN(ca1)||ca1<0||ca1>sc.ca1))return showErr(err,`"${name}": ${fSubjects[i].name} CA1 must be 0–${sc.ca1}.`);if(ca2!==null&&(isNaN(ca2)||ca2<0||ca2>sc.ca2))return showErr(err,`"${name}": ${fSubjects[i].name} CA2 must be 0–${sc.ca2}.`);if(exam!==null&&(isNaN(exam)||exam<0||exam>sc.exam))return showErr(err,`"${name}": ${fSubjects[i].name} Exam must be 0–${sc.exam}.`);const total=(ca1||0)+(ca2||0)+(exam||0);subjects[fSubjects[i].name]={ca1,ca2,exam,total};if(ca1!==null||ca2!==null||exam!==null)anyScore=true;}if(!anyScore)return showErr(err,`"${name}" has no scores.`);const entered=Object.values(subjects).filter(s=>s.ca1!==null||s.ca2!==null||s.exam!==null),totalScored=entered.reduce((a,s)=>a+s.total,0),totalMax=entered.length*sc.total,avg=Math.round((totalScored/totalMax)*100),tRem=el('t-rem-'+remarkIdx)?.value.trim()||'';students.push({name,phone,subjects,totalScored,totalMax,avg,grade:grade(avg),teacherRemark:tRem,htRemark:'',owesDebt:false});remarkIdx++;}if(!students.length)return showErr(err,'Please add at least one student.');const data=load();data.results.push({id:uid(),teacherId:cTeacher.id,teacherName:cTeacher.name,term,cls,session,scheme:sc,subjects:fSubjects.map(s=>s.name),students,createdAt:new Date().toLocaleDateString()});save(data);alert('✅ Results saved and published!');showScreen('teacher-dashboard');}
+function viewDetail(rid){cResultId=rid;const data=load(),r=data.results.find(x=>x.id===rid);if(!r)return;const avgs=r.students.map(s=>s.avg),classAvg=avgs.length?Math.round(avgs.reduce((a,b)=>a+b,0)/avgs.length):0,sc=r.scheme,subjAvgs=r.subjects.map(sn=>{const vals=r.students.map(s=>s.subjects[sn]?.total||0);return{name:sn,avg:(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1),max:sc.total};});el('detail-content').innerHTML=`<div class="sh">${r.term}</div><div class="ss">${r.cls} · ${r.session} · ${r.createdAt}</div><div class="notice n-warn">Score scheme: CA1(${sc.ca1}) + CA2(${sc.ca2}) + Exam(${sc.exam}) = ${sc.total}</div><div class="stat-grid"><div class="stat-card"><div class="stat-n">${classAvg}%</div><div class="stat-l">Class Avg</div></div><div class="stat-card"><div class="stat-n">${r.students.length}</div><div class="stat-l">Students</div></div><div class="stat-card"><div class="stat-n">${avgs.length?Math.max(...avgs):0}%</div><div class="stat-l">Highest</div></div><div class="stat-card"><div class="stat-n">${avgs.length?Math.min(...avgs):0}%</div><div class="stat-l">Lowest</div></div></div><div style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:.65rem">Subject Averages</div><div class="card" style="padding:.75rem 1.25rem;margin-bottom:1rem">${subjAvgs.map(sa=>`<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border)"><span style="font-weight:600;font-size:.88rem">${sa.name}</span><span style="color:var(--muted);font-size:.85rem">${sa.avg} / ${sa.max}</span></div>`).join('')}</div><div style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:.65rem">Students</div><div style="overflow-x:auto;border:1.5px solid var(--border);border-radius:var(--r);background:#fff;margin-bottom:1.5rem"><table class="stbl" style="min-width:${200+r.subjects.length*160}px"><thead><tr class="gh"><th rowspan="2" style="text-align:left;vertical-align:bottom">Name</th>${r.subjects.map(sn=>`<th colspan="4" style="border-left:2px solid #2a3f50">${sn}</th>`).join('')}<th colspan="2" style="border-left:2px solid #2a3f50">Overall</th></tr><tr class="fh">${r.subjects.map(()=>`<th style="border-left:2px solid rgba(255,255,255,.15)">CA1</th><th>CA2</th><th>Exam</th><th style="border-right:2px solid rgba(255,255,255,.15)">Total</th>`).join('')}<th style="border-left:2px solid rgba(255,255,255,.15)">Avg%</th><th>Grade</th></tr></thead><tbody>${r.students.map(s=>`<tr><td><strong>${s.name}</strong>${s.owesDebt?'<span class="badge br" style="margin-left:.35rem">Owes Fees</span>':''}<br><span style="font-size:.7rem;color:var(--muted)">${s.phone}</span></td>${r.subjects.map(sn=>{const d=s.subjects[sn]||{ca1:null,ca2:null,exam:null,total:0};return`<td style="border-left:2px solid var(--border)">${d.ca1??'—'}</td><td>${d.ca2??'—'}</td><td>${d.exam??'—'}</td><td class="total-cell subj-sep">${d.total||'—'}</td>`;}).join('')}<td class="pct-cell">${s.avg}%</td><td class="g${s.grade}">${s.grade}</td></tr>`).join('')}</tbody></table></div>`;showScreen('result-detail');}
+function deleteResult(){if(!confirm('Delete this result set? Cannot be undone.'))return;const data=load();data.results=data.results.filter(r=>r.id!==cResultId);save(data);showScreen('teacher-dashboard');}
+function loginParent(){const name=v('pl-name').trim().toLowerCase(),phone=v('pl-phone').trim().replace(/\s/g,''),err=el('pl-err');err.style.display='none';if(!name||!phone)return showErr(err,"Please enter your child's name and your phone number.");const matches=[];for(const r of load().results)for(const s of r.students)if(s.name.toLowerCase()===name&&s.phone===phone)matches.push({r,s});if(!matches.length)return showErr(err,'No results found. Check the name and phone number, or contact the school.');const debtBlocked=matches.some(m=>m.s.owesDebt);if(debtBlocked){renderDebtBlock(matches[0].s.name);showScreen('parent-results');return;}renderReportCards(matches);showScreen('parent-results');}
+function renderDebtBlock(name){el('parent-content').innerHTML=`<div class="debt-block"><div class="debt-icon">🚫</div><div class="debt-title">Results Blocked</div><div class="debt-msg">Dear Parent of <strong>${name}</strong>, access to results has been restricted due to outstanding school fees.</div><div class="debt-contact"><strong>Please contact the school</strong><br>to clear your balance and unlock results.</div></div>`;}
+function renderReportCards(matches){const settings=getSettings(),schoolName=settings.schoolName||'SchoolLink Portal',resumption=settings.resumption?formatDate(settings.resumption):'To be announced',htName=settings.htName||'Head Teacher',childName=matches[0].s.name;let html=`<div style="margin-bottom:1rem" class="flex-c"><div class="avatar">${childName.charAt(0).toUpperCase()}</div><div><div class="sh" style="margin-bottom:0">${childName}</div><div class="small">${matches.length} report card${matches.length!==1?'s':''}</div></div></div>`;for(const m of matches){const r=m.r,s=m.s,sc=r.scheme,gc=s.avg>=75?'var(--sage)':s.avg>=60?'#2d6abf':s.avg>=50?'var(--gold)':s.avg>=40?'#c05c00':'var(--red)';html+=`<div class="report-card"><div class="rc-header"><div class="rc-school">🎓 ${schoolName}</div><div class="rc-title">Student Report Card</div></div><div class="rc-info-grid"><div class="rc-info-item"><div class="rc-info-lbl">Student Name</div><div class="rc-info-val">${s.name}</div></div><div class="rc-info-item"><div class="rc-info-lbl">Class</div><div class="rc-info-val">${r.cls}</div></div><div class="rc-info-item"><div class="rc-info-lbl">Term</div><div class="rc-info-val">${r.term}</div></div><div class="rc-info-item"><div class="rc-info-lbl">Session</div><div class="rc-info-val">${r.session}</div></div><div class="rc-info-item"><div class="rc-info-lbl">Total Score</div><div class="rc-info-val" style="color:${gc}">${s.totalScored} / ${s.totalMax}</div></div><div class="rc-info-item"><div class="rc-info-lbl">Average / Grade</div><div class="rc-info-val g${s.grade}">${s.avg}% — ${s.grade}</div></div></div><div style="display:flex;gap:.5rem;margin-bottom:.85rem;flex-wrap:wrap"><span class="badge" style="background:#e8f0ee;color:var(--sage)">CA1 / ${sc.ca1}</span><span class="badge" style="background:#e8f0ee;color:var(--sage)">CA2 / ${sc.ca2}</span><span class="badge" style="background:#e8f0ee;color:var(--sage)">Exam / ${sc.exam}</span><span class="badge bg">Total / ${sc.total}</span></div><table class="rc-subj-table"><thead><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>%</th><th>Grade</th></tr></thead><tbody>${r.subjects.map(sn=>{const d=s.subjects[sn]||{ca1:null,ca2:null,exam:null,total:0};const pct=Math.round((d.total/sc.total)*100),gr=grade(pct);return`<tr><td style="font-weight:600">${sn}</td><td>${d.ca1??'—'}</td><td>${d.ca2??'—'}</td><td>${d.exam??'—'}</td><td style="font-weight:700">${d.total||'—'}</td><td>${d.total?pct+'%':'—'}</td><td class="g${gr}">${d.total?gr:'—'}</td></tr>`;}).join('')}</tbody></table>${s.teacherRemark?`<div class="rc-remark-box"><div class="rc-remark-lbl">Class Teacher's Remark</div><div class="rc-remark-text">"${s.teacherRemark}"</div><div class="rc-remark-sign">— ${r.teacherName}</div></div>`:''} ${s.htRemark?`<div class="rc-remark-box" style="background:#e8f0ee;border-left:3px solid var(--sage)"><div class="rc-remark-lbl" style="color:var(--sage)">Head Teacher's Remark</div><div class="rc-remark-text">"${s.htRemark}"</div><div class="rc-remark-sign">— ${htName}</div></div>`:''}<div class="rc-resumption"><div class="rc-resumption-lbl">📅 Next Resumption Date</div><div class="rc-resumption-date">${resumption}</div></div><div class="rc-footer">Generated by SchoolLink · ${r.createdAt}</div></div>`;}el('parent-content').innerHTML=html;}
+function formatDate(d){if(!d)return'To be announced';const dt=new Date(d);return dt.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+function grade(pct){return pct>=75?'A':pct>=60?'B':pct>=50?'C':pct>=40?'D':'F';}
+function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
+function el(id){return document.getElementById(id);}
+function v(id){return(el(id)||{value:''}).value||'';}
+function showErr(e,m){e.textContent=m;e.style.display='block';}
+let dp;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;el('install-banner').style.display='flex';});
+el('install-btn').addEventListener('click',()=>{el('install-banner').style.display='none';if(dp){dp.prompt();dp.userChoice.then(()=>dp=null);}});
+window.addEventListener('appinstalled',()=>{el('install-banner').style.display='none';});
+if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.matchMedia('(display-mode:standalone)').matches){setTimeout(()=>{const b=el('install-banner');b.querySelector('span').textContent='iOS: Share → Add to Home Screen';b.style.display='flex';el('install-btn').style.display='none';},2000);}
+(function(){const data=load();if(data.teachers.length)return;if(!data.settings)data.settings={};data.settings={schoolName:'St. Michael Nursery & Primary School',resumption:'2025-01-13',htName:'Mr. Emmanuel Obi',htPass:'HEAD2024'};data.teachers.push({id:'dt1',name:'Mrs. Grace Adeyemi',email:'grace@school.edu',cls:'JSS 2A',password:btoa('teacher123')});const sc={ca1:20,ca2:20,exam:60,total:100},mk=(ca1,ca2,exam)=>({ca1,ca2,exam,total:ca1+ca2+exam});data.results.push({id:'dr1',teacherId:'dt1',teacherName:'Mrs. Grace Adeyemi',term:'First Term Examination',cls:'JSS 2A',session:'2024/2025',createdAt:new Date().toLocaleDateString(),scheme:sc,subjects:['Mathematics','English Language','Basic Science','Social Studies','Computer Studies'],students:[{name:'Chidi Okafor',phone:'08012345678',subjects:{'Mathematics':mk(16,15,47),'English Language':mk(14,13,38),'Basic Science':mk(15,14,43),'Social Studies':mk(13,12,36),'Computer Studies':mk(12,11,27)},totalScored:326,totalMax:500,avg:65,grade:'B',teacherRemark:'Chidi shows great potential. He needs to work harder on his reading comprehension.',htRemark:'A bright young mind. Stay focused and aim higher.',owesDebt:false},{name:'Amina Bello',phone:'08098765432',subjects:{'Mathematics':mk(18,17,53),'English Language':mk(17,16,46),'Basic Science':mk(18,17,48),'Social Studies':mk(15,14,41),'Computer Studies':mk(14,13,28)},totalScored:395,totalMax:500,avg:79,grade:'A',teacherRemark:'Excellent performance! Amina is a delight to teach. Keep up the outstanding work.',htRemark:'Outstanding results. We are very proud of you, Amina.',owesDebt:false},{name:'Tunde Adeyemi',phone:'07011223344',subjects:{'Mathematics':mk(9,8,28),'English Language':mk(10,9,33),'Basic Science':mk(8,7,25),'Social Studies':mk(7,8,23),'Computer Studies':mk(6,5,19)},totalScored:205,totalMax:500,avg:41,grade:'D',teacherRemark:'Tunde must improve his study habits. Regular attendance and revision are necessary.',htRemark:'We urge parents to support Tunde with extra lessons at home.',owesDebt:true},{name:'Ngozi Eze',phone:'08055667788',subjects:{'Mathematics':mk(19,18,54),'English Language':mk(18,17,53),'Basic Science':mk(19,18,53),'Social Studies':mk(16,15,44),'Computer Studies':mk(14,13,31)},totalScored:422,totalMax:500,avg:84,grade:'A',teacherRemark:'Ngozi is the top student this term. Remarkable dedication and intelligence.',htRemark:'An exceptional student. Continue to be a role model to your peers.',owesDebt:false}]});save(data);})();
+</script>
+<script>
+const mf={name:"SchoolLink",short_name:"SchoolLink",start_url:".",display:"standalone",background_color:"#0f1923",theme_color:"#0f1923",icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f1923'/><text y='.9em' font-size='80' x='10'>🎓</text></svg>",sizes:"192x192",type:"image/svg+xml"}]};
+const bl=new Blob([JSON.stringify(mf)],{type:'application/json'});
+const lk=document.createElement('link');lk.rel='manifest';lk.href=URL.createObjectURL(bl);document.head.appendChild(lk);
+['theme-color','apple-mobile-web-app-capable'].forEach((n,i)=>{const m=document.createElement('meta');m.name=n;m.content=i?'yes':'#0f1923';document.head.appendChild(m);});
+</script>
+</body>
+</html>
